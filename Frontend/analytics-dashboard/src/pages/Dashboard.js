@@ -96,8 +96,8 @@ function Dashboard() {
 
       // Fallback: fetch individual data sources
       const [campaignResponse, marketingResponse] = await Promise.all([
-        api.getCampaigns(),
-        api.getMarketingData()
+        api.getCampaigns().then(res => ({ data: res.data?.data || [] })),
+        api.getMarketingData().then(res => ({ data: res.data?.data || [] }))
       ]);
       
       // Process campaign data with validation

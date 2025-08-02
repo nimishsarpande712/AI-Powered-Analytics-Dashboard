@@ -4,6 +4,7 @@ import { extendTheme } from '@chakra-ui/react';
 const config = {
   initialColorMode: 'light',
   useSystemColorMode: false,
+  cssVarPrefix: 'chakra',
 };
 
 const colors = {
@@ -27,11 +28,55 @@ const fonts = {
 };
 
 const styles = {
-  global: {
+  global: (props) => ({
     body: {
-      bg: 'white',
-      color: 'gray.800',
+      bg: props.colorMode === 'dark' ? 'gray.800' : 'gray.50',
+      color: props.colorMode === 'dark' ? 'white' : 'gray.800',
     },
+  }),
+};
+
+const components = {
+  Box: {
+    baseStyle: (props) => ({
+      bg: props.colorMode === 'dark' ? 'gray.700' : 'white',
+      color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+    }),
+  },
+  Card: {
+    baseStyle: (props) => ({
+      bg: props.colorMode === 'dark' ? 'gray.700' : 'white',
+      color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+    }),
+  },
+  Container: {
+    baseStyle: (props) => ({
+      bg: props.colorMode === 'dark' ? 'gray.800' : 'gray.50',
+    }),
+  },
+  Table: {
+    variants: {
+      simple: (props) => ({
+        th: {
+          bg: props.colorMode === 'dark' ? 'gray.600' : 'gray.50',
+          color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+        },
+        td: {
+          bg: props.colorMode === 'dark' ? 'gray.700' : 'white',
+          color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+        },
+      }),
+    },
+  },
+  Button: {
+    baseStyle: (props) => ({
+      color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+    }),
+  },
+  Heading: {
+    baseStyle: (props) => ({
+      color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+    }),
   },
 };
 
@@ -40,7 +85,7 @@ const theme = extendTheme({
   colors,
   fonts,
   styles,
-  components: {},
+  components,
 });
 
 export default theme;

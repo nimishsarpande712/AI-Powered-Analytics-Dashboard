@@ -6,12 +6,14 @@ const campaignRoutes = require('./campaigns');
 const marketingDataRoutes = require('./marketingData');
 const dataRoutes = require('./dataRoutes');
 const dashboardAnalyticsRoutes = require('./dashboardAnalytics');
+const statisticsRoutes = require('./statistics');
 
 // Mount routes
 router.use('/campaigns', campaignRoutes);
 router.use('/marketing-data', marketingDataRoutes);
 router.use('/data', dataRoutes);
 router.use('/dashboard-analytics', dashboardAnalyticsRoutes);
+router.use('/statistics', statisticsRoutes);
 
 // API info route
 router.get('/', (req, res) => {
