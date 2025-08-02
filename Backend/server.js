@@ -24,12 +24,35 @@ app.get('/', (req, res) => {
 });
 
 // Health check route
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'API is healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    
+    res.status(200).json({
+      status: 'healthy',
+      message: 'API is functioning properly',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: {
+        connected: true,
+        status: 'Database connection established'
+      },
+      version: '1.0.0'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'unhealthy',
+      message: 'API is running but database connection failed',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: {
+        connected: false,
+        error: error.message
+      },
+      version: '1.0.0'
+    });
+  }
 });
 
 // Database connection test
@@ -63,8 +86,12 @@ const startServer = async () => {
       console.log(`   - GET  http://localhost:${PORT}/api/health`);
       console.log(`   - GET  http://localhost:${PORT}/api`);
       console.log(`   - GET  http://localhost:${PORT}/api/campaigns`);
+      console.log(`   - POST http://localhost:${PORT}/api/campaigns`);
+      console.log(`   - PUT  http://localhost:${PORT}/api/campaigns/:id`);
+      console.log(`   - DEL  http://localhost:${PORT}/api/campaigns/:id`);
       console.log(`   - GET  http://localhost:${PORT}/api/marketing-data`);
       console.log(`   - GET  http://localhost:${PORT}/api/data`);
+      console.log(`   - GET  http://localhost:${PORT}/api/dashboard-analytics`);
     });
     
   } catch (error) {
