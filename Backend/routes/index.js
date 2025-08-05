@@ -7,6 +7,7 @@ const marketingDataRoutes = require('./marketingData');
 const dataRoutes = require('./dataRoutes');
 const dashboardAnalyticsRoutes = require('./dashboardAnalytics');
 const statisticsRoutes = require('./statistics');
+const statsRoutes = require('./stats');
 
 // Mount routes
 router.use('/campaigns', campaignRoutes);
@@ -14,6 +15,7 @@ router.use('/marketing-data', marketingDataRoutes);
 router.use('/data', dataRoutes);
 router.use('/dashboard-analytics', dashboardAnalyticsRoutes);
 router.use('/statistics', statisticsRoutes);
+router.use('/stats', statsRoutes);
 
 // API info route
 router.get('/', (req, res) => {
@@ -25,7 +27,8 @@ router.get('/', (req, res) => {
       marketingData: '/api/marketing-data',
       data: '/api/data',
       dashboardAnalytics: '/api/dashboard-analytics',
-      health: '/api/health'
+      health: '/api/health',
+      stats: '/api/stats'
     }
   });
 });

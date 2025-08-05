@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { MarketingData } = require('../models');
+const MarketingDataController = require('../controllers/MarketingDataController');
 
 // GET all marketing data with pagination
 router.get('/', async (req, res) => {
@@ -86,5 +87,8 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Export marketing data to CSV
+router.get('/export', MarketingDataController.exportData);
 
 module.exports = router;

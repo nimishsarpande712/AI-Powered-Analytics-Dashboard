@@ -1,4 +1,5 @@
 const { MarketingData } = require('../models');
+const { Parser } = require('json2csv');
 
 class MarketingDataController {
   // Get all marketing data with pagination
@@ -151,6 +152,45 @@ class MarketingDataController {
       res.status(500).json({ 
         success: false, 
         error: 'Failed to fetch dashboard summary' 
+      });
+    }
+  }
+
+  // Export marketing data to CSV
+  static async exportData(req, res) {
+    try {
+      // Get all marketing data
+      const data = await MarketingData.findAll({
+        raw: true
+      });
+
+      if (!data || data.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: 'No data available for export'
+        });
+      }
+
+      // Configure CSV Parser
+      const fields = Object.keys(data[0]);
+      const opts = { fields };
+      const parser = new Parser(opts);
+
+      // Convert to CSV
+      const csv = parser.parse(data);
+
+      // Set response headers for file download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=marketing-data-export.csv');
+
+      // Send the CSV file
+      res.send(csv);
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to export data',
+        details: error.message
       });
     }
   }

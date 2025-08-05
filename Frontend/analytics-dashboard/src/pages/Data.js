@@ -19,9 +19,9 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  useColorMode,
 } from '@chakra-ui/react';
 import BarChart from '../components/charts/BarChart';
-import LineChart from '../components/charts/LineChart';
 import PieChart from '../components/charts/PieChart';
 import { SearchIcon } from '@chakra-ui/icons';
 import MetricCard from '../components/MetricCard';
@@ -29,6 +29,7 @@ import LoadingState from '../components/LoadingState';
 import api from '../services/api';
 
 const Data = () => {
+  const { colorMode } = useColorMode();
   const [marketingData, setMarketingData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -177,15 +178,16 @@ const Data = () => {
 
           {/* Charts Section */}
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={8}>
-            <Box p={4} bg="white" borderRadius="lg" boxShadow="base">
+            <Box p={4} bg={colorMode === 'dark' ? 'gray.700' : 'white'} borderRadius="lg" boxShadow="base" height="400px">
               <BarChart
                 data={marketingData.slice(0, 10)}
-                dataKey="Income"
-                xAxisKey="ID"
+                barDataKey="Income"
+                xDataKey="ID"
                 title="Customer Income Distribution"
+                colorMode={colorMode}
               />
             </Box>
-            <Box p={4} bg="white" borderRadius="lg" boxShadow="base">
+            <Box p={4} bg={colorMode === 'dark' ? 'gray.700' : 'white'} borderRadius="lg" boxShadow="base" height="400px">
               <PieChart
                 data={[
                   { name: 'Wines', value: marketingData.reduce((sum, item) => sum + (item.MntWines || 0), 0) },
@@ -197,6 +199,7 @@ const Data = () => {
                 dataKey="value"
                 nameKey="name"
                 title="Product Category Distribution"
+                colorMode={colorMode}
               />
             </Box>
           </SimpleGrid>

@@ -151,6 +151,10 @@ const endpoints = {
   
   // Dashboard analytics endpoints
   getDashboardAnalytics: () => withRetry(() => api.get('/dashboard-analytics')),
+  
+  // Statistics endpoints
+  getStats: () => withRetry(() => api.get('/stats')),
+  getConversionTrends: (period) => withRetry(() => api.get(`/statistics/conversion-trends?period=${period}`)),
 };
 
 export default endpoints;

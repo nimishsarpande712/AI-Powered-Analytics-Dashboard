@@ -44,7 +44,6 @@ const Campaigns = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeChartTab, setActiveChartTab] = useState(0);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -209,7 +208,7 @@ const Campaigns = () => {
 
           {/* Charts Section */}
           <Box mb={8}>
-            <Tabs onChange={(index) => setActiveChartTab(index)} colorScheme="brand">
+            <Tabs colorScheme="brand">
               <TabList>
                 <Tab>Budget Analysis</Tab>
                 <Tab>Status Distribution</Tab>
@@ -220,23 +219,25 @@ const Campaigns = () => {
                 {/* Budget Analysis Tab */}
                 <TabPanel p={0} pt={4}>
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
                       <BarChart
                         data={campaigns.slice(0, 10)}
-                        dataKey="budget"
-                        xAxisKey="name"
+                        barDataKey="budget"
+                        xDataKey="name"
                         title="Campaign Budget Distribution"
+                        colorMode={colorMode}
                       />
                     </Box>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
                       <PieChart
                         data={campaigns.slice(0, 5).map(c => ({
                           name: c.name,
-                          value: c.budget
+                          value: parseInt(c.budget || 0)
                         }))}
                         dataKey="value"
                         nameKey="name"
                         title="Top 5 Campaigns by Budget"
+                        colorMode={colorMode}
                       />
                     </Box>
                   </SimpleGrid>
@@ -245,28 +246,30 @@ const Campaigns = () => {
                 {/* Status Distribution Tab */}
                 <TabPanel p={0} pt={4}>
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
                       <PieChart
                         data={[
                           { name: 'Active', value: campaigns.filter(c => c.status === 'active').length },
                           { name: 'Paused', value: campaigns.filter(c => c.status === 'paused').length },
                           { name: 'Completed', value: campaigns.filter(c => c.status === 'completed').length }
-                        ]}
+                        ].filter(item => item.value > 0)}
                         dataKey="value"
                         nameKey="name"
                         title="Campaign Status Distribution"
+                        colorMode={colorMode}
                       />
                     </Box>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
                       <DonutChart
                         data={[
-                          { name: 'Active', value: campaigns.filter(c => c.status === 'active').reduce((sum, c) => sum + (c.budget || 0), 0) },
-                          { name: 'Paused', value: campaigns.filter(c => c.status === 'paused').reduce((sum, c) => sum + (c.budget || 0), 0) },
-                          { name: 'Completed', value: campaigns.filter(c => c.status === 'completed').reduce((sum, c) => sum + (c.budget || 0), 0) }
-                        ]}
+                          { name: 'Active', value: parseInt(campaigns.filter(c => c.status === 'active').reduce((sum, c) => sum + parseFloat(c.budget || 0), 0)) },
+                          { name: 'Paused', value: parseInt(campaigns.filter(c => c.status === 'paused').reduce((sum, c) => sum + parseFloat(c.budget || 0), 0)) },
+                          { name: 'Completed', value: parseInt(campaigns.filter(c => c.status === 'completed').reduce((sum, c) => sum + parseFloat(c.budget || 0), 0)) }
+                        ].filter(item => item.value > 0)}
                         dataKey="value"
                         nameKey="name"
                         title="Budget Distribution by Status"
+                        colorMode={colorMode}
                       />
                     </Box>
                   </SimpleGrid>
@@ -275,24 +278,29 @@ const Campaigns = () => {
                 {/* Performance Metrics Tab */}
                 <TabPanel p={0} pt={4}>
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
-                      <BarChart
-                        data={campaigns.slice(0, 10)}
-                        dataKey="conversionRate"
-                        xAxisKey="name"
-                        title="Campaign Conversion Rates"
-                      />
-                    </Box>
-                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
                       <BarChart
                         data={campaigns.slice(0, 10).map(c => ({
                           name: c.name,
-                          clicks: c.clicks,
-                          impressions: c.impressions / 100 // Scaled down for better visibility
+                          conversionRate: parseFloat(c.conversionRate || 0).toFixed(1)
                         }))}
-                        dataKey="clicks"
-                        xAxisKey="name"
+                        barDataKey="conversionRate"
+                        xDataKey="name"
+                        title="Campaign Conversion Rates"
+                        colorMode={colorMode}
+                      />
+                    </Box>
+                    <Box p={4} borderRadius="lg" boxShadow="base" bg={colorMode === 'dark' ? 'gray.700' : 'white'} height="400px">
+                      <BarChart
+                        data={campaigns.slice(0, 10).map(c => ({
+                          name: c.name,
+                          clicks: parseInt(c.clicks || 0),
+                          impressions: Math.round(parseInt(c.impressions || 0) / 100) // Scaled down for better visibility
+                        }))}
+                        barDataKey="clicks"
+                        xDataKey="name"
                         title="Campaign Engagement (Clicks)"
+                        colorMode={colorMode}
                       />
                     </Box>
                   </SimpleGrid>
