@@ -1,5 +1,5 @@
 # AI-Powered Analytics Dashboard
-
+Live demo link : - https://ai-powered-analytics-dashboard-1-ulx7.onrender.com/
 ## ADmyBRAND Insights - Full-Stack Analytics Dashboard
 
 ADmyBRAND Insights is a modern, full-stack analytics dashboard designed for marketing professionals. It provides a visually stunning and highly interactive interface to analyze customer marketing data, track key performance indicators, and derive actionable insights. The application features a Node.js/Express backend powered by a MySQL database and a dynamic React frontend built with Chakra UI and animated with Anime.js.
