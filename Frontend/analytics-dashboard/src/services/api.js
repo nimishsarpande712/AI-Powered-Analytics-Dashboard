@@ -148,6 +148,22 @@ const endpoints = {
   // Marketing data endpoints
   getMarketingData: () => withRetry(() => api.get('/marketing-data')),
   getMarketingDataById: (id) => withRetry(() => api.get(`/marketing-data/${id}`)),
+  exportMarketingDataCsv: (filters = {}) => {
+    // Create query string from filters
+    const queryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, value);
+      }
+    });
+    
+    // Use window.open for direct download instead of axios
+    const queryString = queryParams.toString();
+    const exportUrl = `${api.defaults.baseURL}/marketing-data/export?${queryString}`;
+    window.open(exportUrl, '_blank');
+    
+    return Promise.resolve({ success: true, message: 'Export initiated' });
+  },
   
   // Dashboard analytics endpoints
   getDashboardAnalytics: () => withRetry(() => api.get('/dashboard-analytics')),

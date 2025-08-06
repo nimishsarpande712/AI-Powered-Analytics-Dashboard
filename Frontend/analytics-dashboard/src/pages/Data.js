@@ -215,34 +215,15 @@ const Data = () => {
                   colorScheme="green" 
                   size="sm"
                   onClick={() => {
-                    const csvContent = 'data:text/csv;charset=utf-8,' + 
-                      // Header row
-                      ['ID', 'Birth Year', 'Education', 'Marital Status', 'Income', 'Kids', 'Teens', 'Customer Since', 'Total Spent'].join(',') + '\n' +
-                      // Data rows
-                      filteredData.map(item => {
-                        const totalSpent = (item.MntWines || 0) + (item.MntFruits || 0) + 
-                          (item.MntMeatProducts || 0) + (item.MntFishProducts || 0) + 
-                          (item.MntSweetProducts || 0) + (item.MntGoldProds || 0);
-                        return [
-                          item.ID,
-                          item.Year_Birth,
-                          item.Education,
-                          item.Marital_Status,
-                          item.Income,
-                          item.Kidhome,
-                          item.Teenhome,
-                          item.Dt_Customer,
-                          totalSpent
-                        ].join(',');
-                      }).join('\n');
-
-                    const encodedUri = encodeURI(csvContent);
-                    const link = document.createElement('a');
-                    link.setAttribute('href', encodedUri);
-                    link.setAttribute('download', 'marketing_data.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    // Use the API service to export CSV with current filters
+                    const filters = {
+                      sortBy: sortBy,
+                      sortOrder: 'asc',
+                      // Add any active filters from the search/filter UI
+                      ...(searchTerm ? { searchTerm: searchTerm } : {})
+                    };
+                    
+                    api.exportMarketingDataCsv(filters);
                   }}
                 >
                   Export Data

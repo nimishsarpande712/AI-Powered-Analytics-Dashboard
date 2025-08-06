@@ -312,24 +312,32 @@ const Campaigns = () => {
                   colorScheme="green"
                   size="sm"
                   onClick={() => {
-                    const csvContent = 'data:text/csv;charset=utf-8,' + 
-                      // Header row
-                      ['Campaign Name', 'Status', 'Budget', 'Conversion Rate'].join(',') + '\n' +
-                      // Data rows
-                      filteredCampaigns.map(campaign => [
-                        campaign.name,
-                        campaign.status,
-                        campaign.budget,
-                        campaign.conversionRate
-                      ].join(',')).join('\n');
-
-                    const encodedUri = encodeURI(csvContent);
-                    const link = document.createElement('a');
-                    link.setAttribute('href', encodedUri);
-                    link.setAttribute('download', 'campaigns_data.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    // Call the backend to generate a proper CSV file
+                    fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/campaigns/export-csv`, {
+                      method: 'GET',
+                      headers: {
+                        'Accept': 'text/csv',
+                      },
+                    })
+                    .then(response => {
+                      if (!response.ok) throw new Error('Network response was not ok');
+                      return response.blob();
+                    })
+                    .then(blob => {
+                      // Create a blob URL and trigger download
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.setAttribute('download', `campaigns-${new Date().toISOString().slice(0,10)}.csv`);
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                      window.URL.revokeObjectURL(url);
+                    })
+                    .catch(error => {
+                      console.error('Error downloading CSV:', error);
+                      // Show error notification if you have a toast component
+                    });
                   }}
                 >
                   Export Data

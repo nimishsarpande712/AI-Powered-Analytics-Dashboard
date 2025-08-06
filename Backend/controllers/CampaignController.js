@@ -213,6 +213,100 @@ class CampaignController {
       });
     }
   }
+
+  // Export campaigns data to CSV
+  static async exportCsv(req, res) {
+    try {
+      const { Parser } = require('json2csv');
+      
+      // Apply filters if provided
+      const whereClause = {};
+      
+      // Status filter
+      if (req.query.status) {
+        whereClause.status = req.query.status;
+      }
+      
+      // Date range filter for startDate
+      if (req.query.startDate && req.query.endDate) {
+        whereClause.startDate = {
+          [Campaign.sequelize.Op.between]: [
+            req.query.startDate,
+            req.query.endDate
+          ]
+        };
+      }
+      
+      // Get all campaign data with filters
+      const campaigns = await Campaign.findAll({
+        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+        order: [['startDate', 'DESC']]
+      });
+
+      if (!campaigns || campaigns.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: 'No campaigns available for export'
+        });
+      }
+
+      // Transform data with calculated fields
+      const transformedData = campaigns.map(campaign => {
+        const campaignData = campaign.toJSON();
+        return {
+          Campaign_Name: campaignData.name,
+          Status: campaignData.status,
+          Budget: campaignData.budget,
+          Spent: campaignData.spent || 0,
+          Remaining_Budget: (campaignData.budget || 0) - (campaignData.spent || 0),
+          Start_Date: campaignData.startDate,
+          End_Date: campaignData.endDate,
+          Channel: campaignData.channel,
+          Target_Audience: campaignData.targetAudience,
+          Impressions: campaignData.impressions || 0,
+          Clicks: campaignData.clicks || 0,
+          Click_Through_Rate: campaignData.clicks && campaignData.impressions 
+            ? ((campaignData.clicks / campaignData.impressions) * 100).toFixed(2) + '%'
+            : '0%',
+          Conversion_Rate: campaignData.conversionRate ? campaignData.conversionRate + '%' : '0%',
+          Cost_Per_Click: campaignData.spent && campaignData.clicks 
+            ? '$' + (campaignData.spent / campaignData.clicks).toFixed(2)
+            : '$0',
+          ROI: campaign.calculateROI() + '%',
+          Is_Active: campaign.isActive() ? 'Yes' : 'No',
+          Description: campaignData.description || ''
+        };
+      });
+
+      // Configure CSV Parser
+      const fields = Object.keys(transformedData[0]);
+      const opts = { 
+        fields,
+        delimiter: ',',
+        quote: '"',
+        header: true,
+        includeEmptyRows: false
+      };
+      const parser = new Parser(opts);
+
+      // Convert to CSV
+      const csv = parser.parse(transformedData);
+
+      // Set response headers for file download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=campaigns-export-${new Date().toISOString().slice(0,10)}.csv`);
+
+      // Send the CSV file
+      res.send(csv);
+    } catch (error) {
+      console.error('Error exporting campaigns data:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to export campaigns data',
+        details: error.message
+      });
+    }
+  }
 }
 
 module.exports = CampaignController;

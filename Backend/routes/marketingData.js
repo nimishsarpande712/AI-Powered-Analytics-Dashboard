@@ -91,4 +91,7 @@ router.get('/:id', async (req, res) => {
 // Export marketing data to CSV
 router.get('/export', MarketingDataController.exportData);
 
+// Alternative export route - makes it more intuitive
+router.get('/export-csv', MarketingDataController.exportData);
+
 module.exports = router;

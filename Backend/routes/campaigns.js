@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Campaign } = require('../models');
+const CampaignController = require('../controllers/CampaignController');
 
 // GET all campaigns
 router.get('/', async (req, res) => {
@@ -118,5 +119,8 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Export campaigns to CSV
+router.get('/export-csv', CampaignController.exportCsv);
 
 module.exports = router;

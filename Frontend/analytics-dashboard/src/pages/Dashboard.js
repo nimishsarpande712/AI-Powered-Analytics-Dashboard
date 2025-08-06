@@ -25,7 +25,6 @@ import api from '../services/api';
 import LoadingState from '../components/LoadingState';
 import MetricCard from '../components/MetricCard';
 import BarChart from '../components/charts/BarChart';
-import PieChart from '../components/charts/PieChart';
 import DonutChart from '../components/charts/DonutChart';
 import LineChart from '../components/charts/LineChart';
 import ChartContainer from '../components/ChartContainer';
@@ -43,31 +42,6 @@ function Dashboard() {
     message: 'Checking connection to server...'
   });
 
-  // Set mock data for development/demo purposes
-  const setMockData = () => {
-    console.log("Setting mock data for dashboard visualization");
-    
-    const mockCampaigns = [
-      { id: 1, name: "Summer Sale", status: "active", conversionRate: 5.7, budget: 12000, impressions: 45000, clicks: 2800, revenue: 35000 },
-      { id: 2, name: "Holiday Special", status: "paused", conversionRate: 3.2, budget: 8000, impressions: 32000, clicks: 1500, revenue: 18000 },
-      { id: 3, name: "New Product Launch", status: "active", conversionRate: 7.1, budget: 15000, impressions: 60000, clicks: 3200, revenue: 42000 },
-      { id: 4, name: "End of Season", status: "completed", conversionRate: 4.5, budget: 9000, impressions: 37500, clicks: 1850, revenue: 22000 },
-      { id: 5, name: "Flash Sale", status: "active", conversionRate: 8.3, budget: 6000, impressions: 28000, clicks: 2100, revenue: 15000 },
-    ];
-
-    const mockMarketingData = [
-      { id: 1, channel: "Social Media", conversionRate: 3.8, acquisitionCost: 14.5, engagement: 18500, revenue: 28000 },
-      { id: 2, channel: "Email", conversionRate: 5.2, acquisitionCost: 9.8, engagement: 12000, revenue: 32000 },
-      { id: 3, channel: "Search", conversionRate: 7.5, acquisitionCost: 12.3, engagement: 24000, revenue: 56000 },
-      { id: 4, channel: "Display Ads", conversionRate: 2.1, acquisitionCost: 18.7, engagement: 45000, revenue: 22000 },
-      { id: 5, channel: "Affiliates", conversionRate: 4.2, acquisitionCost: 11.2, engagement: 8500, revenue: 18000 }
-    ];
-
-    // Ensure data is correctly processed
-    setCampaignData(mockCampaigns);
-    setMarketingData(mockMarketingData);
-    console.log("Mock data has been set successfully", { mockCampaigns, mockMarketingData });
-  };
 
   // Function to retry connection
   const retryConnection = useCallback(() => {
